@@ -43,7 +43,7 @@ for(let i = 0; i < buttons.length; i++){
                     break
             }
 
-            prem = result
+            p.textContent = `${result}`
         }
 
         if(value == "="){
