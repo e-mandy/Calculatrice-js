@@ -1,63 +1,79 @@
-let buttons = document.querySelectorAll('.calc-container .calc .buttons button')
-let resultInput = document.querySelector('.calc-container .calc .result')
+//Apparition des chiffres
 
-p = document.createElement('p')
-resultInput.appendChild(p)
-let value, prem, last, result, secondTime = false
-let operator
-for(let i = 0; i < buttons.length; i++){
-    buttons[i].addEventListener('click', ()=>{
-        value = buttons[i].value
-        if(secondTime == true){
-            p.textContent = ""
-            secondTime = false
+let screen = document.querySelector('.result input')
+
+//Désactivation de l'input
+screen.disabled = true
+
+
+//Evènement sur le clique d'un bouton
+
+let allButtons = document.querySelectorAll("button")
+let value, last, prev, operator
+let first = false
+
+allButtons.forEach(button =>{
+    button.addEventListener('click', ()=>{
+        value = button.value
+
+        if(first == true){
+            screen.value = ""
+            first = false
         }
+
+        
+
         if(!isNaN(value)){
-            p.textContent += `${value}`
-            last = parseInt(p.textContent)
+            screen.value += value
+            last = parseFloat(screen.value)
+            
         }else{
-            if(value !== "="){
-                prem = parseInt(p.textContent)
-                operator = value
-                last = undefined
-                secondTime = true
+
+            //En cas de réinitialisation, on supprime toutes le données
+            if(value == "C"){
+                screen.value = ""
+                operator = undefined
+                first = false
+            }else{
+                if(value != "." && value != "="){
+                    operator = value
+                    first = true
+                    prev = last
+                    last = undefined
+                }
             }
         }
 
-        if(operator != undefined && last != undefined){
+        let result, temp
+        if(last != undefined && operator != undefined && value != "="){
+            
             switch(operator){
                 case "+":
-                    result = last + prem
-                    break
-                
-                case "-":
-                    result = prem - last
+                    result = last + prev + (temp != undefined ? temp : 0)
                     break
 
+                case "-":
+                    result = prev - last
+                    break
+                
                 case "x":
-                    result = last * prem
+                    result = prev * last
                     break
 
                 case "/":
-                    result = prem / last
-                    break
+                result = prev / last
+                break
             }
+            
 
-            p.textContent = `${result}`
+            last = result
+            result = undefined
+
         }
 
         if(value == "="){
-            if(prem == undefined){
-                p.textContent = `${last}`
-            }else{
-                p.textContent = `${result}`
-            }
+            screen.value = last  
         }
-        
 
-            
     })
-}
-
-
-
+})
